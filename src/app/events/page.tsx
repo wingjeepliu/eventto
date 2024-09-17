@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function EventPage() {
   return (
-    <div>Event page</div>
+    <main>Event page</main>
   )
 }
