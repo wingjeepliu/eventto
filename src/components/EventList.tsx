@@ -1,13 +1,26 @@
-import { EventoEvent } from '@/lib/types'
-import EventCard from './event-card'
-import React from 'react'
+import { EventoEvent } from "@prisma/client";
+import EventCard from "./event-card";
+import React from "react";
 
-export default function EventList({events}:{events: EventoEvent[]}) {
-  return (
- <section className='flex flex-wrap gap-10 justify-center max-w-p[1100px] px-[20px]'>
+export default async function EventList({ city }: { city: string }) {
+  // const city = params.city;
+  let url = `https://bytegrad.com/course-assets/projects/evento/api/events?city=${city}`;
+  console.log(url);
+  const response = await fetch(
+    `https://bytegrad.com/course-assets/projects/evento/api/events?city=${city}`,
     {
-      events.map(event => <EventCard key={event.id} event={event} />)
+      next: {
+        revalidate: 300,
+      },
     }
- </section>
-  )
+  );
+  const events: EventoEvent[] = await response.json();
+
+  return (
+    <section className="flex flex-wrap gap-10 justify-center max-w-p[1100px] px-[20px]">
+      {events.map((event) => (
+        <EventCard key={event.id} event={event} />
+      ))}
+    </section>
+  );
 }
