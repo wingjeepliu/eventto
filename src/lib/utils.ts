@@ -3,6 +3,7 @@ import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import prisma from "./db";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 // const prisma = new PrismaClient();
 
 export function cn(...inputs: ClassValue[]) {
@@ -17,40 +18,43 @@ export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export async function getEvents(city: string, page = 1, itemsPerPage = 6) {
-  // const url = `https://bytegrad.com/course-assets/projects/evento/api/events?city=${city}`;
-  // const response = await fetch(url, {
-  //   next: {
-  //     revalidate: 300,
-  //   },
-  // });
-  // const events = await response.json();
-  // return events;
+// export async function getEvents(city: string, page = 1, itemsPerPage = 6) {
+export const getEvents = unstable_cache(
+  async (city: string, page = 1, itemsPerPage = 6) => {
+    // const url = `https://bytegrad.com/course-assets/projects/evento/api/events?city=${city}`;
+    // const response = await fetch(url, {
+    //   next: {
+    //     revalidate: 300,
+    //   },
+    // });
+    // const events = await response.json();
+    // return events;
 
-  const events = await prisma.eventoEvent.findMany({
-    where: {
-      city: city === "all" ? undefined : capitalize(city),
-    },
-    orderBy: {
-      date: "desc",
-    },
-    take: itemsPerPage,
-    skip: (page - 1) * itemsPerPage,
-  });
-  if (!events) {
-    return notFound();
+    const events = await prisma.eventoEvent.findMany({
+      where: {
+        city: city === "all" ? undefined : capitalize(city),
+      },
+      orderBy: {
+        date: "desc",
+      },
+      take: itemsPerPage,
+      skip: (page - 1) * itemsPerPage,
+    });
+    if (!events) {
+      return notFound();
+    }
+
+    const totalCount = await prisma.eventoEvent.count({
+      where: {
+        city: city === "all" ? undefined : capitalize(city),
+      },
+    });
+
+    return { events, totalCount };
   }
-
-  const totalCount = await prisma.eventoEvent.count({
-    where: {
-      city: city === "all" ? undefined : capitalize(city),
-    },
-  });
-
-  return { events, totalCount };
-}
-
-export async function getEvent(slug: string) {
+);
+// export async function getEvent(slug: string) {
+export const getEvent = unstable_cache(async (slug: string) => {
   // const response = await fetch(
   //   `https://bytegrad.com/course-assets/projects/evento/api/events/${slug}`
   // );
@@ -68,4 +72,4 @@ export async function getEvent(slug: string) {
   console.log(events);
   console.log(slug), "-=-=-=-=-=-=-=";
   return events;
-}
+});
