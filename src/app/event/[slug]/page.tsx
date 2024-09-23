@@ -2,7 +2,7 @@ import React from "react";
 import { EventoEvent } from "@prisma/client";
 import Image from "next/image";
 import H1 from "@/components/H1";
-import { capitalize, sleep } from "@/lib/utils";
+import { capitalize, getEvent, sleep } from "@/lib/utils";
 import { Metadata } from "next";
 type EventPageProps = {
   params: { slug: string };
@@ -19,11 +19,12 @@ export function generateMetadata({ params }: EventPageProps): Metadata {
 export default async function page({ params }: EventPageProps) {
   // sleep();
   const slug = params.slug;
-  const response = await fetch(
-    `https://bytegrad.com/course-assets/projects/evento/api/events/${slug}`
-  );
-  const event: EventoEvent = await response.json();
-  console.log(event);
+  // const response = await fetch(
+  //   `https://bytegrad.com/course-assets/projects/evento/api/events/${slug}`
+  // );
+  // const event: EventoEvent = await response.json();
+  // console.log(event);
+  const event = (await getEvent(slug)) as EventoEvent;
   return (
     <main>
       <section

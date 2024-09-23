@@ -11,7 +11,21 @@ export default function EventCard({ event }: { event: EventoEvent }) {
   const { scrollYProgress } = useScroll({
     target: ref,
   });
-  console.log(scrollYProgress, "scrollYProgress");
+  // console.log(scrollYProgress, "scrollYProgress");
+  // MotionValue {
+  //   version: '10.16.4',
+  //   timeDelta: 0,
+  //   lastUpdated: 0,
+  //   canTrackVelocity: true,
+  //   events: {},
+  //   updateAndNotify: [Function (anonymous)],
+  //   scheduleVelocityCheck: [Function (anonymous)],
+  //   velocityCheck: [Function (anonymous)],
+  //   hasAnimated: false,
+  //   current: 0,
+  //   prev: 0,
+  //   owner: undefined
+  // }
   const scaleProgress = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
   const opacityProgress = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
   return (
@@ -57,7 +71,11 @@ export default function EventCard({ event }: { event: EventoEvent }) {
               day: "2-digit",
             })}
           </p>
-          <p className="text-sx text-accent uppercase">Nov</p>
+          <p className="text-sx text-accent uppercase">
+            {new Date(event.date).toLocaleDateString("en-US", {
+              month: "short",
+            })}
+          </p>
         </section>
       </section>
     </MotionLink>
